@@ -5,7 +5,7 @@ import io
 
 # Puxa a chave de forma segura dos Secrets do Streamlit
 if "GEMINI_API_KEY" in st.secrets:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    genai.configure(api_key=st.secrets["AIzaSyCRxau9a3xE-G1K4R0c8svM6eUReDz3kxA"])
 else:
     st.error("ERRO: Configure a chave API nos Secrets do Streamlit!")
 
