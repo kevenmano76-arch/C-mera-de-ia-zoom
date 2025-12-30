@@ -1,51 +1,45 @@
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
-import io
 
-# Puxa a chave de forma segura dos Secrets do Streamlit
+# Configuração segura da API
 if "GEMINI_API_KEY" in st.secrets:
-    genai.configure(api_key=st.secrets["AIzaSyCRxau9a3xE-G1K4R0c8svM6eUReDz3kxA"])
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 else:
-    st.error("ERRO: Configure a chave API nos Secrets do Streamlit!")
+    st.error("Configure a chave API nos Secrets!")
 
-st.set_page_config(layout="wide", page_title="AI Zoom Camera")
+st.set_page_config(page_title="IA Zoom Camera", layout="wide")
 
-# Interface Estilizada
-st.markdown("""
-    <style>
-    .stApp { background-color: #000; color: white; }
-    div[data-testid="stCameraInput"] { border: 2px solid #333; border-radius: 20px; }
-    </style>
-    """, unsafe_allow_html=True)
+# Estilo da Câmera
+st.markdown("<style>.stApp {background-color: #000; color: white;}</style>", unsafe_allow_html=True)
 
-# Layout: Galeria (Esq), Câmera (Meio), Inverter (Dir)
 col1, col2, col3 = st.columns([1, 4, 1])
 
-with col1:
-    st.button("🖼️", help="Ver Galeria")
-
-with col3:
-    st.button("🔄", help="Alternar Câmera")
+with col1: st.button("🖼️")
+with col3: st.button("🔄")
 
 with col2:
     foto = st.camera_input(" ")
-    zoom = st.select_slider("Ajuste de Zoom", options=[f"{i}x" for i in range(1, 51)], value="1x")
+    zoom = st.select_slider("Zoom", options=[f"{i}x" for i in range(1, 51)], value="1x")
     
-    if st.button("🔴 TIRAR FOTO E MELHORAR", use_container_width=True):
+    if st.button("📸 PROCESSAR FOTO", use_container_width=True):
         if foto:
-            with st.spinner("Processando Super-Zoom 4K..."):
+            try:
                 img = Image.open(foto)
+                # Modelo flash que é mais rápido e estável
                 model = genai.GenerativeModel('gemini-1.5-flash')
-                # Comando para a IA agir como lente
-                response = model.generate_content([
-                    f"Atue como uma lente telescópica. Aplique zoom de {zoom}. "
-                    "Melhore a nitidez de todos os textos e detalhes pequenos para que fiquem legíveis.", 
-                    img
-                ])
-                st.image(img, caption="Foto Original")
-                st.subheader("Resultado Melhorado pela IA:")
-                st.write(response.text)
+                
+                with st.spinner("IA lendo detalhes e melhorando a imagem..."):
+                    # Comando simplificado para evitar o erro NotFound
+                    response = model.generate_content([
+                        f"Aumente a nitidez e leia os textos desta imagem como se fosse um zoom de {zoom}.", 
+                        img
+                    ])
+                    st.image(img, caption="Original")
+                    st.success("Resultado da IA:")
+                    st.write(response.text)
+            except Exception as e:
+                st.error(f"Erro na IA: {e}")
         else:
-            st.warning("Ative a câmera primeiro!")
-  
+            st.warning("Tire uma foto primeiro!")
+            
