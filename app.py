@@ -27,7 +27,8 @@ with col2:
             try:
                 img = Image.open(foto)
                 # Modelo flash que é mais rápido e estável
-                model = genai.GenerativeModel('models/gemini-1.5-flash')
+                model = genai.GenerativeModel('gemini-1.5-flash')
+
                 
                 with st.spinner("IA lendo detalhes e melhorando a imagem..."):
                     # Comando simplificado para evitar o erro NotFound
